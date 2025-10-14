@@ -38,51 +38,6 @@ def _seed_everything(seed: int):
     except Exception:
         pass
 
-class SimpleMLPRegressor:
-    def __init__(self, input_dim, hidden_dims, lr=1e-3, epochs=200, batch_size=128, seed=None):
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.input_dim = input_dim
-        self.hidden_dims = hidden_dims
-        self.lr = lr
-        self.epochs = epochs
-        self.batch_size = batch_size
-        self.seed = seed
-        if seed is not None:
-            torch.manual_seed(seed)
-        layers = []
-        dims = [input_dim] + hidden_dims + [1]
-        for i in range(len(dims) - 2):
-            layers += [nn.Linear(dims[i], dims[i+1]), nn.ReLU()]
-        layers.append(nn.Linear(dims[-2], dims[-1]))
-        self.model = nn.Sequential(*layers).to(self.device)
-
-    def fit(self, X, y):
-        X_tensor = torch.tensor(X, dtype=torch.float32).to(self.device)
-        y_tensor = torch.tensor(y, dtype=torch.float32).view(-1, 1).to(self.device)
-
-        dataset = torch.utils.data.TensorDataset(X_tensor, y_tensor)
-        dataloader = torch.utils.data.DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
-
-        optimizer = optim.Adam(self.model.parameters(), lr=self.lr)
-        criterion = nn.MSELoss()
-
-        self.model.train()
-        for _ in range(self.epochs):
-            for xb, yb in dataloader:
-                optimizer.zero_grad()
-                preds = self.model(xb)
-                loss = criterion(preds, yb)
-                loss.backward()
-                optimizer.step()
-
-    def predict(self, X):
-        X_tensor = torch.tensor(X, dtype=torch.float32).to(self.device)
-        self.model.eval()
-        with torch.no_grad():
-            preds = self.model(X_tensor).cpu().numpy().flatten()
-        return preds
-
-
 @dataclass
 class ImportanceEstimator(abc.ABC):
     """Interface: `.fit(X, y)` then `.importance(X, y, j=None)` returns scalar or array."""
