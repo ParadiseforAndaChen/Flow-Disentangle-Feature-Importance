@@ -4,4 +4,4 @@ For the implementation of each experiment described in the paper, please follow 
 [ParadiseforAndaChen/FLOW-DISENTANGLED-FEATURE-IMPORTANCE](https://github.com/ParadiseforAndaChen/FLOW-DISENTANGLED-FEATURE-IMPORTANCE).
 
 The notebook **Cardiotocography.ipynb** demonstrates how to apply the paper’s FDFI method to a concrete example.  
-A fixed random seed is set to ensure reproducible results.
+**A fixed random seed is set to ensure reproducible results.**
